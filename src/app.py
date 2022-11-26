@@ -10,6 +10,7 @@ from utils import APIException, generate_sitemap
 from admin import setup_admin
 from models import db, User
 #from models import Person
+import requests
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
@@ -44,6 +45,18 @@ def handle_hello():
     }
 
     return jsonify(response_body), 200
+
+@app.route('/people', methods=['GET'])
+def handle_people():
+    people_response=requests.get("https://swapi.dev/api/people")
+    results=people_response.json()["results"]
+    new_results=[]
+    for i in results:
+        new_results.append(i["name"])
+    response_body = {
+        "msg": "Hello, this is your GET /user response "
+    }
+    return jsonify(new_results), 200
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
